@@ -25,6 +25,23 @@
             "webRoot": "${workspaceFolder}/frontend/src",
             "sourceMaps": true,
             "smartStep": true
+        },
+        {
+            "name": "Debug Backend (NestJS)",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "preLaunchTask": "backend: start in dev mode (debug)",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "smartStep": true,
+            "trace": true,
+            "outFiles": [
+                "${workspaceFolder}/backend/dist/**/*.js"
+            ]
         }
     ]
 }

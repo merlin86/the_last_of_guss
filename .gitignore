@@ -1,3 +1,8 @@
+# compiled output
+backend/dist
+backend/node_modules
+backend/build
+
 # Logs
 logs
 *.log
@@ -7,10 +12,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
 
 # Editor directories and files
 .fetch-client/*
@@ -22,3 +27,32 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
