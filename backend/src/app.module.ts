@@ -4,6 +4,7 @@ import globalConfig from '@configs/global.config';
 import pinoPrettyConfig from '@configs/pino-pretty.config';
 import { ConfigModule } from '@nestjs/config';
 import { LogsModule } from '@modules/logs/logs.module';
+import { PrismaModule } from 'nestjs-prisma';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { LogsModule } from '@modules/logs/logs.module';
       isGlobal: true,
       load: [globalConfig, pinoPrettyConfig],
     }),
+    PrismaModule.forRoot({ isGlobal: true }),
     LogsModule,
     LoginModule,
   ],
