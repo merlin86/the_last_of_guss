@@ -8,8 +8,11 @@ import { login } from '../../external/backend';
 import PasswordInput from '../../components/PasswordInput';
 import TextField from '@mui/material/TextField';
 import { useUserDispatch } from '../../providers/UserContext';
+import { useNavigate } from 'react-router';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
   const userDispatch = useUserDispatch();
 
   const [dataSent, setDataSent] = useState(false);
@@ -26,8 +29,7 @@ export default function LoginPage() {
 
     login(data.name, data.password).then((response) => {
       userDispatch({ type: 'login', token: response.data!.token });
-      setErrorVisible(false);
-      setDataSent(false);
+      void navigate('/');
     }).catch((error: unknown) => {
       console.error(error);
       userDispatch({ type: 'logout' });

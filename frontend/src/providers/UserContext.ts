@@ -11,6 +11,12 @@ export interface UserDispatchAction {
   token?: string;
 }
 
+function decodeJWTPayload(token: string): { name: string; role: string } {
+  const base64 = token.split('.')[1];
+  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes)) as { name: string; role: string };
+}
+
 export const UserContext = createContext(null as UserData | null);
 export const UserDispatchContext = createContext(null as Dispatch<UserDispatchAction> | null);
 
@@ -33,7 +39,7 @@ export function userReducer(_state: UserData | null, action: UserDispatchAction)
         throw new Error('Token is required for login action');
       }
 
-      const decoded_token = JSON.parse(atob(action.token.split('.')[1])) as UserData;
+      const decoded_token = decodeJWTPayload(action.token);
 
       localStorage.setItem('token', action.token);
       return {
@@ -57,7 +63,7 @@ export function userReducer(_state: UserData | null, action: UserDispatchAction)
 export function userInit(): UserData | null {
   const token = localStorage.getItem('token');
   if (token) {
-    const decoded_token = JSON.parse(atob(token.split('.')[1])) as UserData;
+    const decoded_token = decodeJWTPayload(token);
     return {
       token: token,
       name: decoded_token.name,
