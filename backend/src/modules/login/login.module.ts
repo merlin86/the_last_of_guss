@@ -5,7 +5,7 @@ import { LoginRepository } from './login.repository';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [JwtModule],
+  imports: [JwtModule.register({ global: true })],
   providers: [LoginService, LoginRepository],
   controllers: [LoginController],
 })

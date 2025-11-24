@@ -1,4 +1,5 @@
 import { Nullable } from '@common/utils/typeguards';
+import { Request } from 'express';
 
 export type LogicalErrorFormat = {
   code: string;
@@ -15,3 +16,12 @@ export type UniversalResponse<T> = {
   status: UniversalResponseStatus;
   error: Nullable<LogicalErrorFormat>;
 };
+
+export interface ContextData {
+  name: string;
+  role: string;
+}
+
+export interface AuthenticatedRequest extends Request {
+  context?: ContextData;
+}
