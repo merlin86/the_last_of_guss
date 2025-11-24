@@ -20,6 +20,11 @@ export class RoundsService {
     return this.getRoundInfo(round_data);
   }
 
+  async getRoundsList(): Promise<RoundResDTO[]> {
+    const rounds_data = await this.repository.getRoundsList();
+    return rounds_data.map((round) => this.getRoundInfo(round));
+  }
+
   private getRoundInfo(round: Prisma.roundsGetPayload<Prisma.roundsDefaultArgs>): RoundResDTO {
     const round_start = DateTime.fromJSDate(round.created_at).plus({ seconds: this.config.cooldown_duration });
     const round_end = round_start.plus({ seconds: this.config.round_duration });

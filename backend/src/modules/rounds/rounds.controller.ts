@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Inject, Post, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Inject, Post, UseInterceptors } from '@nestjs/common';
 import { UniversalResponseInterceptor } from '@common/interceptors/universal-response.interceptor';
 import { UniversalResponse } from '@common/decorators/universal-response.decorator';
 import { JwtAuth } from '@modules/login/auth.guard';
@@ -31,5 +31,12 @@ export class RoundsController {
       throw new UnauthorizedToCreateRoundError();
     }
     return this.service.create();
+  }
+
+  @Get()
+  @UniversalResponse(RoundResDTO, true)
+  @JwtAuth()
+  getRoundsList() {
+    return this.service.getRoundsList();
   }
 }
