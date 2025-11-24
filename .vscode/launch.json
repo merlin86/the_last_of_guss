@@ -1,0 +1,47 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Frontend in Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "port": 9222,
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "preLaunchTask": "frontend: start in dev mode",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "smartStep": true,
+            "trace": true
+        },
+        {
+            "name": "Attach to Chrome",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "sourceMaps": true,
+            "smartStep": true
+        },
+        {
+            "name": "Debug Backend (NestJS)",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "preLaunchTask": "backend: start in dev mode (debug)",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "smartStep": true,
+            "trace": true,
+            "outFiles": [
+                "${workspaceFolder}/backend/dist/**/*.js"
+            ]
+        }
+    ]
+}

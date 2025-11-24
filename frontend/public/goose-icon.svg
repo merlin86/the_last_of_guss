@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Голова -->
+  <circle cx="110" cy="45" r="16" fill="none" stroke="#000" stroke-width="3.5"/>
+  
+  <!-- Глаз -->
+  <circle cx="118" cy="42" r="2.5" fill="#000"/>
+  
+  <!-- Клюв -->
+  <path d="M 124 45 L 138 45" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Шея -->
+  <path d="M 105 60 Q 100 85 105 110" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Основное тело -->
+  <ellipse cx="100" cy="135" rx="42" ry="45" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Левое крыло -->
+  <path d="M 65 120 Q 45 125 48 160" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Правое крыло -->
+  <path d="M 135 120 Q 155 125 152 160" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Левая лапа -->
+  <line x1="85" y1="175" x2="85" y2="190" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <line x1="80" y1="190" x2="90" y2="190" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Правая лапа -->
+  <line x1="115" y1="175" x2="115" y2="190" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <line x1="110" y1="190" x2="120" y2="190" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+</svg>
