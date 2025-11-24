@@ -13,6 +13,7 @@ export interface PasswordInputProps {
   fullWidth?: boolean;
   margin?: 'none' | 'dense' | 'normal';
   required?: boolean;
+  maxLength?: number;
   show_password_label?: string;
   hide_password_label?: string;
 }
@@ -42,7 +43,8 @@ export default function PasswordInput(props: PasswordInputProps) {
       <OutlinedInput
         id={props.id}
         label={props.label}
-        type={showPassword ? "text" : "password"}
+        type={showPassword ? 'text' : 'password'}
+        inputProps={{ maxLength: props.maxLength }}
         endAdornment={
         <InputAdornment position="end">
             <IconButton

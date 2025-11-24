@@ -29,6 +29,7 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
+      "quotes": [2, "single", { "avoidEscape": true }],
       "@typescript-eslint/no-non-null-assertion": "off",
     }
   },

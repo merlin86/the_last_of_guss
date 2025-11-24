@@ -1,5 +1,10 @@
-import LoginPage from "./login/LoginPage";
+import LoginPage from './pages/login/LoginPage';
+import UserProvider from './providers/UserProvider';
 
 export default function App() {
-  return <LoginPage />;
+  return (
+    <UserProvider>
+      <LoginPage />
+    </UserProvider>
+  );
 }
