@@ -46,3 +46,15 @@ export async function fetchRounds(token: string): Promise<BackendResponse<RoundR
 
   return response.data;
 }
+
+export async function createRound(token: string): Promise<BackendResponse<RoundResponse>> {
+  const response = await axios.post<BackendResponse<RoundResponse>>('/v1/api/rounds', {}, {
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}

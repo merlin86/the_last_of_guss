@@ -1,14 +1,16 @@
 import Alert from '@mui/material/Alert';
 import BoxWithTitle from '../../components/BoxWithTitle';
+import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
+import { createRound } from '../../external/backend';
 import { roundsStore, useRoundsStore } from './RoundsStore';
 import RoundView from './RoundView';
 import Skeleton from '@mui/material/Skeleton';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import { useNavigate } from 'react-router';
 import { useUser, useUserDispatch } from '../../providers/UserContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function RoundsListPage() {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export default function RoundsListPage() {
   const userDispatch = useUserDispatch();
 
   const data = useRoundsStore();
+  const [roundCreationError, setRoundCreationError] = useState(false);
 
   // if not logged in, redirect to login page
   useEffect(() => {
@@ -33,6 +36,35 @@ export default function RoundsListPage() {
       userDispatch({ type: 'logout' });
     }
   }, [data, navigate, userDispatch]);
+
+  const onCreateRoundClick = () => {
+    void createRound(user!.token).then(response => {
+      if (response.status === 'OK' && response.data) {
+        setRoundCreationError(false);
+      } else if (response.status === 'ERROR' && response.error) {
+        console.error(response.error);
+        setRoundCreationError(true);
+      }
+    }).catch(() => {
+      setRoundCreationError(true);
+    });
+  }
+
+  let admin_content;
+  if (user?.role === 'admin') {
+    admin_content = (
+      <>
+        <Collapse in={roundCreationError}>
+          <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
+            Ошибка при создании раунда
+          </Alert>
+        </Collapse>
+        <Button variant='contained' sx={{ marginBottom: 2 }} onClick={onCreateRoundClick}>
+          Создать раунд
+        </Button>
+      </>
+    );
+  }
 
   let content;
   if (data.rounds.length === 0) {
@@ -57,10 +89,11 @@ export default function RoundsListPage() {
     <Container maxWidth="md">
       <BoxWithTitle title="Список раундов" secondary={user?.name} content_component="main">
         <Collapse in={data.is_error}>
-          <Alert severity='error' variant='filled' sx={{ marginTop: 2 }}>
+          <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
             Ошибка при загрузке списка раундов
           </Alert>
         </Collapse>
+        {admin_content}
         {content}
       </BoxWithTitle>
     </Container>
