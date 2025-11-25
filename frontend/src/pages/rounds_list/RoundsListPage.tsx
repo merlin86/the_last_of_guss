@@ -70,9 +70,9 @@ export default function RoundsListPage() {
   if (data.rounds.length === 0) {
     content = (
       <>
-        <Skeleton variant="rounded" height={240} sx={{ marginTop: 2 }} />
-        <Skeleton variant="rounded" height={240} sx={{ marginTop: 2 }} />
-        <Skeleton variant="rounded" height={240} sx={{ marginTop: 2 }} />
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
       </>
     );
   } else {
@@ -86,8 +86,8 @@ export default function RoundsListPage() {
   }
 
   return (
-    <Container maxWidth="md">
-      <BoxWithTitle title="Список раундов" secondary={user?.name} content_component="main">
+    <Container maxWidth='md'>
+      <BoxWithTitle title='Список раундов' secondary={user?.name} content_component='main'>
         <Collapse in={data.is_error}>
           <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
             Ошибка при загрузке списка раундов
