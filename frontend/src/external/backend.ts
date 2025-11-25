@@ -22,6 +22,13 @@ export interface RoundResponse {
   status: 'active' | 'completed' | 'cooldown';
 }
 
+export interface RoundExtendedResponse extends RoundResponse {
+  total_score?: number;
+  winner_name?: string;
+  winner_score?: number;
+  my_score?: number;
+}
+
 export async function login(login: string, password: string): Promise<BackendResponse<LoginResponse>> {
   const response = await axios.post<BackendResponse<LoginResponse>>('/v1/api/login', {
     login,
