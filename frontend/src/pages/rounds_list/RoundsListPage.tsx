@@ -17,6 +17,7 @@ export default function RoundsListPage() {
 
   const data = useRoundsStore();
 
+  // if not logged in, redirect to login page
   useEffect(() => {
     if (!user) {
       void navigate('/login');
@@ -24,6 +25,7 @@ export default function RoundsListPage() {
     roundsStore.setToken(user?.token ?? null);
   }, [navigate, user]);
 
+  // if token expired, log out user
   useEffect(() => {
     if (data.is_token_expired) {
       roundsStore.resetErrors();
