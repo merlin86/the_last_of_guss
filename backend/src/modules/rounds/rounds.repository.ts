@@ -19,6 +19,18 @@ export class RoundsRepository {
     return this.prisma.rounds.findUnique({ where: { round_id } });
   }
 
+  getRoundWithPlayers(round_id: string) {
+    return this.prisma.rounds.findUnique({
+      where: { round_id },
+      include: {
+        players: {
+          include: { user: true },
+          orderBy: { score: Prisma.SortOrder.desc },
+        },
+      },
+    });
+  }
+
   getRoundsList() {
     return this.prisma.rounds.findMany({ orderBy: { created_at: Prisma.SortOrder.desc } });
   }

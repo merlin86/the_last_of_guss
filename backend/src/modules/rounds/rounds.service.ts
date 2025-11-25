@@ -8,6 +8,7 @@ import { type ConfigType } from '@nestjs/config';
 import { DateTime } from 'luxon';
 import { TapResDTO } from './dto/tap.res.dto';
 import { RoundFinishedError, RoundNotFoundError, RoundNotStartedError } from './rounds.errors';
+import { RoundExtendedResDTO } from './dto/round-extended.res.dto';
 
 @Injectable()
 export class RoundsService {
@@ -20,6 +21,55 @@ export class RoundsService {
     const round_id = uuidv7();
     const round_data = await this.repository.create(round_id);
     return this.getRoundInfo(round_data);
+  }
+
+  async getRound(round_id: string, user_id: number): Promise<RoundExtendedResDTO> {
+    const round_data = await this.repository.getRoundWithPlayers(round_id);
+    if (!round_data) {
+      throw new RoundNotFoundError(round_id);
+    }
+
+    const base_info = this.getRoundInfo(round_data);
+
+    if (base_info.status !== RoundStatus.COMPLETED) {
+      return base_info;
+    }
+
+    // Computing total score
+    let total_score = 0;
+    let my_score = 0;
+    for (const player of round_data.players) {
+      if (!this.config.blacklisted_roles.includes(player.user.role)) {
+        total_score += player.score;
+        if (player.user_id === user_id) {
+          my_score = player.score;
+        }
+      }
+    }
+
+    // Finding the winner, considering blacklisted roles
+    let winner_idx = 0;
+    while (
+      winner_idx < round_data.players.length &&
+      this.config.blacklisted_roles.includes(round_data.players[winner_idx].user.role)
+    ) {
+      winner_idx++;
+    }
+
+    let winner_name = 'no winner';
+    let winner_score = 0;
+    if (winner_idx < round_data.players.length) {
+      winner_name = round_data.players[winner_idx].user.name;
+      winner_score = round_data.players[winner_idx].score;
+    }
+
+    return {
+      ...base_info,
+      total_score,
+      winner_name,
+      winner_score,
+      my_score,
+    };
   }
 
   async tap(round_id: string, user_id: number): Promise<TapResDTO> {

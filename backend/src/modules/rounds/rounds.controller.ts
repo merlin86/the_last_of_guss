@@ -11,6 +11,7 @@ import { RoundResDTO } from './dto/round.res.dto';
 import roundsConfig from '@configs/rounds.config';
 import { type ConfigType } from '@nestjs/config';
 import { TapResDTO } from './dto/tap.res.dto';
+import { RoundExtendedResDTO } from './dto/round-extended.res.dto';
 
 @Controller({
   path: 'api/rounds',
@@ -47,5 +48,12 @@ export class RoundsController {
   @JwtAuth()
   tap(@Param('round_id') round_id: string, @Context() context?: ContextData) {
     return this.service.tap(round_id, context?.id || 0);
+  }
+
+  @Get(':round_id')
+  @UniversalResponse(RoundExtendedResDTO)
+  @JwtAuth()
+  getRoundInfo(@Param('round_id') round_id: string, @Context() context?: ContextData) {
+    return this.service.getRound(round_id, context?.id || 0);
   }
 }
