@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import { roundsStore, useRoundsStore } from './RoundsStore';
 import RoundView from './RoundView';
 import Skeleton from '@mui/material/Skeleton';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import { useNavigate } from 'react-router';
 import { useUser, useUserDispatch } from '../../providers/UserContext';
 import { useEffect } from 'react';
@@ -43,9 +44,13 @@ export default function RoundsListPage() {
       </>
     );
   } else {
-    content = data.rounds.map(round => (
-      <RoundView key={round.round_id} round={round} />
-    ));
+    content = <TransitionGroup>
+      {data.rounds.map(round => (
+        <Collapse key={round.round_id} in={true}>
+          <RoundView round={round} />
+        </Collapse>
+      ))}
+    </TransitionGroup>;
   }
 
   return (

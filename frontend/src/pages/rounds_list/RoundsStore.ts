@@ -2,6 +2,8 @@ import { AxiosError } from 'axios';
 import { fetchRounds, type RoundResponse } from '../../external/backend';
 import { useSyncExternalStore } from 'react';
 
+const FETCH_PERIOD_MS = 10000;
+
 export interface RoundsData {
   is_error: boolean;
   is_token_expired: boolean;
@@ -11,6 +13,7 @@ export interface RoundsData {
 let token: string | null = null;
 let data: RoundsData = { is_error: false, is_token_expired: false, rounds: [] };
 let listeners: (() => void)[] = [];
+let timer: number | null = null;
 
 export const roundsStore = {
   setToken(new_token: string | null) {
@@ -29,8 +32,12 @@ export const roundsStore = {
   subscribe(this: void, listener: () => void) {
     listeners = [...listeners, listener];
     void fetchData();
+    startFetching();
     return () => {
       listeners = listeners.filter(l => l !== listener);
+      if (listeners.length === 0) {
+        stopFetching();
+      }
     };
   },
 
@@ -48,6 +55,23 @@ export function useRoundsStore() {
 function emitChange() {
   for (const listener of listeners) {
     listener();
+  }
+}
+
+function startFetching() {
+  if (timer !== null) {
+    return;
+  }
+
+  timer = setInterval(() => {
+    void fetchData();
+  }, FETCH_PERIOD_MS);
+}
+
+function stopFetching() {
+  if (timer !== null) {
+    clearInterval(timer);
+    timer = null;
   }
 }
 
