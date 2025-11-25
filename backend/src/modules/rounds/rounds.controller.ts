@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Inject, Post, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, UseInterceptors } from '@nestjs/common';
 import { UniversalResponseInterceptor } from '@common/interceptors/universal-response.interceptor';
 import { UniversalResponse } from '@common/decorators/universal-response.decorator';
 import { JwtAuth } from '@modules/login/auth.guard';
@@ -10,6 +10,7 @@ import { UnauthorizedToCreateRoundError } from './rounds.errors';
 import { RoundResDTO } from './dto/round.res.dto';
 import roundsConfig from '@configs/rounds.config';
 import { type ConfigType } from '@nestjs/config';
+import { TapResDTO } from './dto/tap.res.dto';
 
 @Controller({
   path: 'api/rounds',
@@ -38,5 +39,13 @@ export class RoundsController {
   @JwtAuth()
   getRoundsList() {
     return this.service.getRoundsList();
+  }
+
+  @Post(':round_id/tap')
+  @HttpCode(HttpStatus.OK)
+  @UniversalResponse(TapResDTO)
+  @JwtAuth()
+  tap(@Param('round_id') round_id: string, @Context() context?: ContextData) {
+    return this.service.tap(round_id, context?.id || 0);
   }
 }

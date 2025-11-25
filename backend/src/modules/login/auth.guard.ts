@@ -30,11 +30,11 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const { name, role } = this.jwt.verify(token, {
+      const { id, name, role } = this.jwt.verify(token, {
         secret: this.config.jwt_secret,
       });
 
-      request.context = { name, role };
+      request.context = { id, name, role };
       return true;
     } catch {
       throw new InvalidTokenError();
