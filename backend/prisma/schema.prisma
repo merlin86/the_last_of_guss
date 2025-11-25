@@ -13,3 +13,9 @@ model users {
   role        String    @db.VarChar(255)
   password    String    @db.VarChar(255)
 }
+
+model rounds {
+  id          Int       @id @default(autoincrement())
+  round_id    String    @db.Uuid @unique
+  created_at  DateTime  @default(now())
+}

@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as packageJson from '../package.json';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import globalConfig from '@configs/global.config';
 import { ConfigType } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import { NullPipe } from '@common/pipes/null.pipe';
+import { LogicalError } from '@common/exceptions/logical.error';
+import { exceptionFactory } from '@common/utils/validation-exception-factory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -16,6 +19,15 @@ async function bootstrap() {
   const globalConf = app.get<ConfigType<typeof globalConfig>>(globalConfig.KEY);
 
   app.useLogger(app.get(Logger));
+  app.useGlobalPipes(
+    new NullPipe(),
+    new ValidationPipe({
+      transform: true,
+      exceptionFactory: (errors) => {
+        return new LogicalError({ code: '400', message: exceptionFactory(errors) }, 400);
+      },
+    }),
+  );
 
   if (globalConf.enable_swagger) {
     const app_version = `v${packageJson.version}`;
