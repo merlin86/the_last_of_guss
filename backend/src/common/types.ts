@@ -18,6 +18,7 @@ export type UniversalResponse<T> = {
 };
 
 export interface ContextData {
+  id: number;
   name: string;
   role: string;
 }

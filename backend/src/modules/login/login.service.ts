@@ -24,7 +24,7 @@ export class LoginService {
       throw new InvalidPasswordError();
     }
 
-    const token = await this.jwt.signAsync(_.pick(user, ['name', 'role']), {
+    const token = await this.jwt.signAsync(_.pick(user, ['id', 'name', 'role']), {
       secret: this.config.jwt_secret,
       expiresIn: this.config.jwt_expiration_min * 60,
     });
