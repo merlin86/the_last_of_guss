@@ -1,6 +1,7 @@
 import Brightness1 from '@mui/icons-material/Brightness1';
 import { DateTime } from 'luxon';
 import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { type RoundResponse } from '../../external/backend';
 import Typography from '@mui/material/Typography';
@@ -32,21 +33,57 @@ export default function RoundView(props: RoundViewProps) {
   }
 
   return (
-    <Paper sx={{ marginTop: 2 }}>
-      <Typography component='h1' sx={{ display: 'flex', alignItems: 'center', padding: 2 }}>
-        <Brightness1 sx={{ marginRight: 2 }}/>
-        {`Round ID: ${props.round.round_id}`}
-      </Typography>
-      <Typography component='p' sx={{ paddingLeft: 2, paddingRight: 2 }}>
-        {`Start: ${start}`}
-      </Typography>
-      <Typography component='p' sx={{ paddingLeft: 2, paddingRight: 2 }}>
-        {`End: ${end}`}
-      </Typography>
-      <Divider sx={{ marginTop: 2 }}/>
-      <Typography component='p' sx={{ padding: 2 }}>
-        {`Status: ${status}`}
-      </Typography>
+    <Paper sx={{
+      marginTop: 2,
+      cursor: 'pointer',
+      transition: 'box-shadow 0.3s ease',
+      '&:hover': {
+        boxShadow: (theme) => `0 0 8px ${theme.palette.primary.main}`,
+      }
+    }}>
+      <Grid container spacing={2} padding={2}>
+        <Grid size={{ sm: 2, md: 1 }}>
+          <Brightness1 />
+        </Grid>
+        <Grid size={{ sm: 10, md: 11 }}>
+          <Typography component='h1' sx={{ display: 'flex', alignItems: 'center' }}>
+            {`Round ID: ${props.round.round_id}`}
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 2, md: 1 }}>
+          <Typography component='p'>
+            Start:
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 10, md: 11 }}>
+          <Typography component='p'>
+            {start}
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 2, md: 1 }}>
+          <Typography component='p'>
+            End:
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 10, md: 11 }}>
+          <Typography component='p'>
+            {end}
+          </Typography>
+        </Grid>
+        <Grid size={12}>
+          <Divider />
+        </Grid>
+        <Grid size={{ sm: 2, md: 1 }}>
+          <Typography component='p'>
+            Status:
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 10, md: 11 }}>
+          <Typography component='p'>
+            {status}
+          </Typography>
+        </Grid>
+      </Grid>
     </Paper>
   );
 }
