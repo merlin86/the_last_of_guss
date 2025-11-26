@@ -64,7 +64,7 @@ export default function RoundsListPage() {
     refetchIntervalInBackground: true,
   });
 
-  const createNewRound = useMutation({
+  const doCreateRound = useMutation({
     mutationFn: async (token: string) => {
       const response = await createRound(token);
       if (response.status === 'OK' && response.data) {
@@ -90,11 +90,11 @@ export default function RoundsListPage() {
     if (data.isError && isTokenExpired(data.error)) {
       userDispatch({ type: 'logout' });
     }
-  }, [data, navigate, userDispatch]);
+  }, [data, userDispatch]);
 
   const onCreateRoundClick = () => {
    if (user?.token) {
-    createNewRound.mutate(user.token);
+    doCreateRound.mutate(user.token);
    }
   }
 
@@ -107,7 +107,7 @@ export default function RoundsListPage() {
           </Alert>
         </Collapse>
         {user?.role === 'admin' && (<>
-          <Collapse in={createNewRound.isError}>
+          <Collapse in={doCreateRound.isError}>
             <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
               Ошибка при создании раунда
             </Alert>
@@ -116,7 +116,7 @@ export default function RoundsListPage() {
             variant='contained'
             sx={{ marginBottom: 2 }}
             onClick={onCreateRoundClick}
-            disabled={createNewRound.isPending}
+            disabled={doCreateRound.isPending}
           >
             Создать раунд
           </Button>
