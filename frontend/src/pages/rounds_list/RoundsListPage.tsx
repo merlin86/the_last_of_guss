@@ -3,14 +3,43 @@ import BoxWithTitle from '../../components/BoxWithTitle';
 import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
-import { createRound } from '../../external/backend';
+import {
+  createRound,
+  fetchRounds,
+  isTokenExpired,
+  type RoundResponse,
+} from '../../external/backend';
 import { Link, useNavigate } from 'react-router';
-import { roundsStore, useRoundsStore } from './RoundsStore';
 import RoundView from './RoundView';
 import Skeleton from '@mui/material/Skeleton';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { useEffect } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUser, useUserDispatch } from '../../providers/UserContext';
-import { useEffect, useState } from 'react';
+
+function getView(data?: RoundResponse[]) {
+  if (!data) {
+    return (
+      <>
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
+        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
+      </>
+    );
+  }
+
+  return (
+     <TransitionGroup>
+      {data.map(round => (
+        <Collapse key={round.round_id} in={true}>
+          <Link to={`/round/${round.round_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <RoundView round={round} />
+          </Link>
+        </Collapse>
+      ))}
+    </TransitionGroup>
+  );
+}
 
 export default function RoundsListPage() {
   const navigate = useNavigate();
@@ -18,86 +47,81 @@ export default function RoundsListPage() {
   const user = useUser();
   const userDispatch = useUserDispatch();
 
-  const data = useRoundsStore();
-  const [roundCreationError, setRoundCreationError] = useState(false);
+  const data = useQuery({
+    queryKey: ['rounds_list'],
+    queryFn: async () => {
+      if (user?.token) {
+        const response = await fetchRounds(user.token);
+        if (response.status === 'OK' && response.data) {
+          return response.data;
+        } else {
+          throw new Error(response.error?.message || 'Unknown error');
+        }
+      }
+      return;
+    },
+    refetchInterval: 5000,
+    refetchIntervalInBackground: true,
+  });
+
+  const doCreateRound = useMutation({
+    mutationFn: async (token: string) => {
+      const response = await createRound(token);
+      if (response.status === 'OK' && response.data) {
+        return response.data;
+      } else {
+        throw new Error(response.error?.message || 'Unknown error');
+      }
+    },
+    onSuccess: (data) => {
+      void navigate(`/round/${data.round_id}`);
+    },
+  });
 
   // if not logged in, redirect to login page
   useEffect(() => {
     if (!user) {
       void navigate('/login');
     }
-    roundsStore.setToken(user?.token ?? null);
   }, [navigate, user]);
 
   // if token expired, log out user
   useEffect(() => {
-    if (data.is_token_expired) {
-      roundsStore.resetErrors();
+    if (data.isError && isTokenExpired(data.error)) {
       userDispatch({ type: 'logout' });
     }
-  }, [data, navigate, userDispatch]);
+  }, [data, userDispatch]);
 
   const onCreateRoundClick = () => {
-    void createRound(user!.token).then(response => {
-      if (response.status === 'OK' && response.data) {
-        setRoundCreationError(false);
-        void navigate(`/round/${response.data.round_id}`);
-      } else if (response.status === 'ERROR' && response.error) {
-        console.error(response.error);
-        setRoundCreationError(true);
-      }
-    }).catch(() => {
-      setRoundCreationError(true);
-    });
-  }
-
-  let admin_content;
-  if (user?.role === 'admin') {
-    admin_content = (
-      <>
-        <Collapse in={roundCreationError}>
-          <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
-            Ошибка при создании раунда
-          </Alert>
-        </Collapse>
-        <Button variant='contained' sx={{ marginBottom: 2 }} onClick={onCreateRoundClick}>
-          Создать раунд
-        </Button>
-      </>
-    );
-  }
-
-  let content;
-  if (data.rounds.length === 0) {
-    content = (
-      <>
-        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
-        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
-        <Skeleton variant='rounded' height={240} sx={{ marginTop: 2 }} />
-      </>
-    );
-  } else {
-    content = <TransitionGroup>
-      {data.rounds.map(round => (
-        <Collapse key={round.round_id} in={true}>
-          <Link to={`/round/${round.round_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <RoundView round={round} />
-          </Link>
-        </Collapse>
-      ))}
-    </TransitionGroup>;
+   if (user?.token) {
+    doCreateRound.mutate(user.token);
+   }
   }
 
   return (
     <Container maxWidth='md'>
       <BoxWithTitle title='Список раундов' secondary={user?.name} content_component='main'>
-        <Collapse in={data.is_error}>
+        <Collapse in={data.isError}>
           <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
             Ошибка при загрузке списка раундов
           </Alert>
         </Collapse>
-        {admin_content}
-        {content}
+        {user?.role === 'admin' && (<>
+          <Collapse in={doCreateRound.isError}>
+            <Alert severity='error' variant='filled' sx={{ marginBottom: 2 }}>
+              Ошибка при создании раунда
+            </Alert>
+          </Collapse>
+          <Button
+            variant='contained'
+            sx={{ marginBottom: 2 }}
+            onClick={onCreateRoundClick}
+            disabled={doCreateRound.isPending}
+          >
+            Создать раунд
+          </Button>
+        </>)}
+        {getView(data.data)}
       </BoxWithTitle>
     </Container>
   );
