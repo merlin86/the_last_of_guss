@@ -13,7 +13,6 @@ import Skeleton from '@mui/material/Skeleton';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useUser, useUserDispatch } from '../../providers/UserContext';
-import { roundsStore } from '../rounds_list/RoundsStore';
 
 function computeStatus(round_start: string, round_end: string): 'active' | 'cooldown' | 'completed' {
   const now = DateTime.utc();
@@ -50,7 +49,7 @@ export default function RoundPage() {
   // if token expired, log out user
   useEffect(() => {
     if (data.is_token_expired) {
-      roundsStore.resetErrors();
+      roundStore.resetErrors();
       userDispatch({ type: 'logout' });
     }
   }, [data, navigate, userDispatch]);

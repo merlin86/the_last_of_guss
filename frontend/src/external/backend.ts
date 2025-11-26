@@ -33,6 +33,15 @@ export interface TapResponse {
   score: number;
 }
 
+export function isTokenExpired(error: unknown): boolean {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 401) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export async function login(login: string, password: string): Promise<BackendResponse<LoginResponse>> {
   const response = await axios.post<BackendResponse<LoginResponse>>('/v1/api/login', {
     login,

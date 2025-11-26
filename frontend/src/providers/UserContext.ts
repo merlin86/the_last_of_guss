@@ -39,14 +39,19 @@ export function userReducer(_state: UserData | null, action: UserDispatchAction)
         throw new Error('Token is required for login action');
       }
 
-      const decoded_token = decodeJWTPayload(action.token);
-
-      localStorage.setItem('token', action.token);
-      return {
-        token: action.token,
-        name: decoded_token.name,
-        role: decoded_token.role,
-      };
+      try {
+        const decoded_token = decodeJWTPayload(action.token);
+        localStorage.setItem('token', action.token);
+        return {
+          token: action.token,
+          name: decoded_token.name,
+          role: decoded_token.role,
+        };
+      } catch (err) {
+        console.error(err);
+        localStorage.removeItem('token');
+        return null;
+      }
     }
 
     case 'logout': {
@@ -63,12 +68,18 @@ export function userReducer(_state: UserData | null, action: UserDispatchAction)
 export function userInit(): UserData | null {
   const token = localStorage.getItem('token');
   if (token) {
-    const decoded_token = decodeJWTPayload(token);
-    return {
-      token: token,
-      name: decoded_token.name,
-      role: decoded_token.role,
-    };
+    try {
+      const decoded_token = decodeJWTPayload(token);
+      return {
+        token: token,
+        name: decoded_token.name,
+        role: decoded_token.role,
+      };
+    } catch (error) {
+      console.error(error);
+      localStorage.removeItem('token');
+      return null;
+    }
   }
   return null;
 }
